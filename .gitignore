@@ -1,3 +1,6 @@
+*-chrome-mac.zip
+third_party/WebKit/Source/devtools/front_end/audits2/lighthouse/renderer/logger.js
+third_party/WebKit/Source/devtools/front_end/audits2/lighthouse/renderer/report-ui-features.js
 
 # working files
 .vim/viminfo
@@ -28,8 +31,10 @@ Thumbs.db
 
 # fish shell
 fishd.*
+fish/config.fish.backup
 .config/fish/fish_history
 fish/fish_history
+fish/fish_variables
 
 # random
 shilocation

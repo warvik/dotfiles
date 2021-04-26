@@ -2,6 +2,9 @@
 
 # Install command-line tools using Homebrew
 
+# (Optionally) Turn off brew's analytics https://docs.brew.sh/Analytics
+# brew analytics off
+
 # Make sure we’re using the latest Homebrew
 brew update
 
@@ -31,10 +34,10 @@ brew install wget --with-iri
 
 # Install more recent versions of some OS X tools
 brew install vim --with-override-system-vi
-brew install homebrew/dupes/nano
-brew install homebrew/dupes/grep
-brew install homebrew/dupes/openssh
-brew install homebrew/dupes/screen
+brew install nano
+brew install grep
+brew install openssh
+brew install screen
 
 # z hopping around folders
 brew install z

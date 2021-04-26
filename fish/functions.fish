@@ -44,10 +44,20 @@ function md --wraps mkdir -d "Create a directory and cd into it"
 end
 
 function gz --d "Get the gzipped size"
-  echo "orig size    (bytes): "
-  cat "$argv[1]" | wc -c
-  echo "gzipped size (bytes): "
-  gzip -c "$argv[1]" | wc -c
+  printf "%-20s %12s\n"  "compression method"  "bytes"
+  printf "%-20s %'12.0f\n"  "original"         (cat "$argv[1]" | wc -c)
+  
+  # -5 is what GH pages uses, dunno about others
+  # fwiw --no-name is equivalent to catting into gzip
+  printf "%-20s %'12.0f\n"  "gzipped (-5)"     (cat "$argv[1]" | gzip -5 -c | wc -c)
+  printf "%-20s %'12.0f\n"  "gzipped (--best)" (cat "$argv[1]" | gzip --best -c | wc -c)
+  
+  # brew install brotli to get these as well
+  if hash brotli
+  # googlenews uses about -5, walmart serves --best 
+  printf "%-20s %'12.0f\n"  "brotli (-q 5)"    (cat "$argv[1]" | brotli -c --quality=5 | wc -c)
+  printf "%-20s %'12.0f\n"  "brotli (--best)"  (cat "$argv[1]" | brotli -c --best | wc -c)
+  end
 end
 
 function sudo!!
@@ -60,10 +70,9 @@ function shellswitch
 	chsh -s (brew --prefix)/bin/$argv
 end
 
-function code
-  env VSCODE_CWD="$PWD" open -n -b "com.microsoft.VSCodeInsiders" --args $argv
+function upgradeyarn
+  curl -o- -L https://yarnpkg.com/install.sh | bash
 end
-
 
 function fuck -d 'Correct your previous console command'
     set -l exit_code $status
@@ -81,7 +90,7 @@ function server -d 'Start a HTTP server in the current dir, optionally specifyin
     if test $argv[1]
         set port $argv[1]
     else
-        set port 8000
+        set port 8011
     end
 
     open "http://localhost:$port/" &
@@ -98,12 +107,19 @@ end
 
 
 function emptytrash -d 'Empty the Trash on all mounted volumes and the main HDD. then clear the useless sleepimage'
-    sudo rm -rfv /Volumes/*/.Trashes
-    sudo rm -v /private/var/vm/sleepimage
-    grm -rf ~/.Trash/*
-    rm -rfv /Users/paulirish/Library/Application\ Support/stremio/Cache
-    rm -rfv /Users/paulirish/Library/Application\ Support/stremio/stremio-cache
-    rm -rfv ~/Library/Application Support/Spotify/PersistentCache/Update/*.tbz
+    sudo rm -rfv "/Volumes/*/.Trashes"
+    grm -rf "~/.Trash/*"
+    rm -rfv "/Users/paulirish/Library/Application Support/stremio/Cache"
+    rm -rfv "/Users/paulirish/Library/Application Support/stremio/stremio-cache"
+    rm -rfv "~/Library/Application Support/Spotify/PersistentCache/Update/*.tbz"
     rm -rfv ~/Library/Caches/com.spotify.client/Data
     rm -rfv ~/Library/Caches/Firefox/Profiles/98ne80k7.dev-edition-default/cache2
+end
+
+function cond -d 'initialize conda'
+  # >>> conda initialize >>>
+  # !! Contents within this block are managed by 'conda init' !!
+  eval /opt/miniconda3/bin/conda "shell.fish" "hook" $argv | source
+  # <<< conda initialize <<<
+  conda activate py2
 end
